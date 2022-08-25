@@ -15,5 +15,5 @@ public class MenuOption {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RESTAURANT_ID")
-    private Restaurant restaurant;
+    private Store restaurant;
 }
