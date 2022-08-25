@@ -1,0 +1,13 @@
+<html
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        xmlns:th="http://thymeleaf.org"
+        layout:decorate="~{layout}">
+
+<div layout:fragment="content" class="container my-3">
+    <a th:href="@{|/category/modify/${id}|}">
+    <div th:text="${cate.id}"></div>
+    <div th:text="${cate.name}"></div>
+    </a>
+    <a th:href="@{|/category/delete/${cate.id}|}">삭제</a>
+</div>
+</html>

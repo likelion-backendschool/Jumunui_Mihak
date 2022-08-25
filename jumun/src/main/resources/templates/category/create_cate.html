@@ -1,0 +1,22 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+    <mid style="text-align: center">
+        <div>
+            <h2>카테고리 추가</h2>
+        </div>
+
+
+        <div>
+            <form class="cate_form" method="POST" th:action="@{/category/create}" th:object="${categoryForm}">
+                <input class="cate" th:field="*{name}" type="text" placeholder="추가하고 싶은 카테고리를 입력하세요">
+                <div th:fragment="formErrorsFragment" class="alert alert-danger" role="alert"
+                     th:if="${#fields.hasAnyErrors()}">
+                    <div th:each="err : ${#fields.allErrors()}" th:text="${err}"/>
+                </div>
+
+                <input type="submit" style="width: 15%; margin: auto;" value="추가하기">
+            </form>
+        </div>
+    </mid>
+</div>
+</html>

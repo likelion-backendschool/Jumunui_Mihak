@@ -3,11 +3,11 @@ package com.mihak.jumun.entity;
 import javax.persistence.*;
 
 @Entity
-public class Restaurant {
+public class Store {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "RESTAURANT_ID")
+    @Column(name = "STORE_ID")
     private Long id;
 
     private String name;

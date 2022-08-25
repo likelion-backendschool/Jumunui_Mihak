@@ -1,0 +1,17 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+    <mid style="text-align: center">
+        <div>
+            <h2>카테고리 수정</h2>
+        </div>
+
+
+        <div>
+            <form class="cate_form" method="POST" th:action="@{''}" th:object="${categoryForm}">
+                <input class="cate" name = "name" th:field="*{name}" type="text">
+                <input type="submit" style="width: 15%; margin: auto;"  value="수정하기">
+            </form>
+        </div>
+    </mid>
+</div>
+</html>

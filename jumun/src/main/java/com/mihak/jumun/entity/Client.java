@@ -4,11 +4,11 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Customer {
+public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CUSTOMER_ID")
+    @Column(name = "CLIEND_ID")
     private Long id;
 
     private String nickname;
