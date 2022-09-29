@@ -58,15 +58,14 @@ public class KaKaoPayService {
         params.add("quantity", "1");
         params.add("total_amount", String.valueOf(order.getTotalPrice()));
         params.add("tax_free_amount", "0");
-        params.add("approval_url", "http://34.201.102.196:8080/kakaoPaySuccess/" + orderId);
-        params.add("cancel_url", "http://34.201.102.196:8080/kakaoPayCancel/" + orderId);
-        params.add("fail_url", "http://34.201.102.196:8080/kakaoPaySuccessFail/" + orderId);
+        params.add("approval_url", "http://localhost:8080/kakaoPaySuccess/" + orderId);
+        params.add("cancel_url", "http://localhost:8080/kakaoPayCancel/" + orderId);
+        params.add("fail_url", "http://localhost:8080/kakaoPaySuccessFail/" + orderId);
 
         HttpEntity<MultiValueMap<String, String>> body = new HttpEntity<>(params, headers);
 
         try {
             kakaoPayResponse = restTemplate.postForObject(new URI(HOST + "/v1/payment/ready"), body, KakaoPayResponse.class);
-            log.info("kakaoPayReady tid : {}", kakaoPayResponse.getTid());
             return kakaoPayResponse.getNext_redirect_mobile_url();
 
         } catch (RestClientException e) {
