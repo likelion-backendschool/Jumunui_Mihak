@@ -45,7 +45,7 @@ public class CustomerMenuController {
         Store store = storeService.findBySerialNumber(storeSN);
         List<Category> categoryList = scService.findAllbyStoreId(store.getId());
         model.addAttribute("categoryList", categoryList);
-        List<Menu> menuList = menuService.findByCategoryId(categoryId);
+        List<Menu> menuList = menuService.findAllByCategoryId(categoryId);
         model.addAttribute("categoryId" , categoryId);
         model.addAttribute("menuList" , menuList);
         model.addAttribute("storeSN", storeSN);

@@ -23,7 +23,7 @@ public class CustomerMenuService {
                 .imgUrl(menu.getImgUrl())
                 .description(menu.getDescription())
                 .price(menu.getPrice())
-                .optionGroups(optionGroupService.getOptionGroupByMenu(menu))
+                .optionGroups(optionGroupService.getOptionGroupsByMenu(menu))
                 .checkOptions(new ArrayList<>())
                 .build();
 
