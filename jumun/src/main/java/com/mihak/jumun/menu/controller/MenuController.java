@@ -40,8 +40,8 @@ public class MenuController {
     @GetMapping("/{storeSN}/admin/store/menu")
     public String showCreateForm(@PathVariable String storeSN, Model model) {
         Store store = storeService.findBySerialNumber(storeSN);
-        List<Category> categoryList = scService.findAllbyStoreId(store.getId());
-        model.addAttribute("categoryList", categoryList);
+
+        model.addAttribute("categoryList", scService.findAllbyStoreId(store.getId()));
         model.addAttribute("menuFormDto", new MenuFormDto());
         return "menu/create_menu";
     }
@@ -57,18 +57,19 @@ public class MenuController {
         Store store = storeService.findBySerialNumber(storeSN);
         menuForm.setStore(store);
         // 여기다가 중복 로직 추가.
+
         boolean isMenuDuplicated = menuService.isMenuDuplicated(menuForm.getName(), menuForm.getStore());
         if (isMenuDuplicated) {
             result.rejectValue("name", "duplicatedMenu", "이미 똑같은 메뉴가 있습니다.");
             return "menu/create_menu";
         }
+
         if (!file.isEmpty()) {
-            /*S3 컨트롤러 부분*/
             String imgPath = s3Service.upload(file);
-            /*menuForm의 변수에 S3처리 후 리턴된 Url을 넣어주는 코드*/
             menuForm.setImgUrl(imgPath);
-        }else
+        } else {
             menuForm.setImgUrl("https://jumun-bucket.s3.ap-northeast-2.amazonaws.com/readyForMenu.png");
+        }
 
         menuService.save(menuForm);
         return "redirect:/" + store.getSerialNumber() + "/admin/store/menuList";
@@ -79,10 +80,9 @@ public class MenuController {
     @GetMapping("/{storeSN}/admin/store/menuList")
     public String showMenuList(@PathVariable String storeSN, Model model) {
         Store store = storeService.findBySerialNumber(storeSN);
-        List<Category> categoryList = scService.findAllbyStoreId(store.getId());
-        model.addAttribute("categoryList", categoryList);
-        List<Menu> menuList = menuService.findAllByStore(storeSN);
-        model.addAttribute("menuList", menuList);
+
+        model.addAttribute("categoryList", scService.findAllbyStoreId(store.getId()));
+        model.addAttribute("menuList", menuService.findAllByStore(storeSN));
         model.addAttribute("storeSN", storeSN);
 
         return "menu/menu_list";
@@ -93,10 +93,8 @@ public class MenuController {
     @ResponseBody
     public String changeMenuViewByCategory(@RequestParam Long categoryId, @PathVariable("storeSN") String storeSN, Model model) {
         Store store = storeService.findBySerialNumber(storeSN);
-        List<Category> categoryList = scService.findAllbyStoreId(store.getId());
-        model.addAttribute("categoryList", categoryList);
-        List<Menu> menuList = menuService.findAllByCategoryId(categoryId);
-        model.addAttribute("menuList" , menuList);
+        model.addAttribute("categoryList", scService.findAllbyStoreId(store.getId()));
+        model.addAttribute("menuList" , menuService.findAllByCategoryId(categoryId));
         model.addAttribute("storeSN", storeSN);
 
         return "redirect:/" +storeSN+ "/admin/store/menu_list"+categoryId;
@@ -105,11 +103,9 @@ public class MenuController {
     @GetMapping("/{storeSN}/admin/store/menuList/{categoryId}")
     public String menuView(@PathVariable("storeSN") String storeSN, @PathVariable("categoryId") Long categoryId, Model model) {
         Store store = storeService.findBySerialNumber(storeSN);
-        List<Category> categoryList = scService.findAllbyStoreId(store.getId());
-        model.addAttribute("categoryList", categoryList);
-        List<Menu> menuList = menuService.findAllByCategoryAndStore(categoryId, store);
+        model.addAttribute("categoryList", scService.findAllbyStoreId(store.getId()));
         model.addAttribute("categoryId" , categoryId);
-        model.addAttribute("menuList" , menuList);
+        model.addAttribute("menuList" , menuService.findAllByCategoryAndStore(categoryId, store));
         model.addAttribute("storeSN", storeSN);
 
         return "menu/menu_list";
@@ -119,10 +115,8 @@ public class MenuController {
     @ResponseBody
     public String changeMenuViewByAnotherCategory(@PathVariable("categoryId") Long categoryId, @PathVariable("storeSN") String storeSN, Model model) {
         Store store = storeService.findBySerialNumber(storeSN);
-        List<Category> categoryList = scService.findAllbyStoreId(store.getId());
-        model.addAttribute("categoryList", categoryList);
-        List<Menu> menuList = menuService.findAllByCategoryId(categoryId);
-        model.addAttribute("menuList" , menuList);
+        model.addAttribute("categoryList", scService.findAllbyStoreId(store.getId()));
+        model.addAttribute("menuList" , menuService.findAllByCategoryId(categoryId));
         model.addAttribute("storeSN", storeSN);
 
         return "redirect:/" +storeSN+ "/admin/store/menu_list"+categoryId;
@@ -133,21 +127,13 @@ public class MenuController {
     @GetMapping("/{storeSN}/admin/store/menu/modify/{menuId}")
     public String showModifyForm(@PathVariable String storeSN, @PathVariable Long menuId, Model model) {
         Store store = storeService.findBySerialNumber(storeSN);
-        List<Category> categoryList = scService.findAllbyStoreId(store.getId());
-        model.addAttribute("categoryList", categoryList);
-        List<OptionGroup> optionGroupList = optionGroupService.findAllByStore(store);
-        model.addAttribute("optionGroupList", optionGroupList);
-        List<OptionGroup> optionGroups = menuAndOptionGroupService.getOptionGroupsByMenu(menuService.findById(menuId));
 
-        model.addAttribute("optionGroups", optionGroups);
-        Menu findMenu = menuService.findById(menuId);
-        MenuFormDto menuFormDto = new MenuFormDto();
-        Category category = findMenu.getCategory();
-        Long categoryId = null;
-        if(category == null) categoryId = null;
-        else categoryId = category.getId();
+        model.addAttribute("categoryList", scService.findAllbyStoreId(store.getId()));
+        model.addAttribute("optionGroupList", optionGroupService.findAllByStore(store));
+        model.addAttribute("optionGroups", menuAndOptionGroupService.getOptionGroupsByMenu(menuService.findById(menuId)));
 
-        menuFormDto.setMenuInfo(categoryId, findMenu.getName(), findMenu.getPrice(), findMenu.getImgUrl(), findMenu.getDescription(), findMenu.getStore());
+        Menu menu = menuService.findById(menuId);
+        MenuFormDto menuFormDto = menu.toFormDto(menu);
 
         model.addAttribute("menuFormDto", menuFormDto);
         return "menu/modify_menu";
@@ -217,5 +203,4 @@ public class MenuController {
         menuAndOptionGroupService.deleteByMenuAndOptionGroup(menu, optionGroup);
         return "redirect:/" + store.getSerialNumber() + "/admin/store/menu/modify/" + menu.getId();
     }
-
 }

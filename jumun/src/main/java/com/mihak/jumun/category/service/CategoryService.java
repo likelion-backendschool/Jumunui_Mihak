@@ -28,10 +28,6 @@ public class CategoryService {
         categoryRepository.save(newCate);
     }
 
-    public List<Category> findAll() {
-        return categoryRepository.findAll();
-    }
-
     public Category findById(Long id) {
         return categoryRepository.findById(id).orElseThrow(()->new RuntimeException("해당 객체 없음"));
     }
@@ -41,14 +37,10 @@ public class CategoryService {
         categoryRepository.save(cate);
     }
 
-    public Optional<Category> findByName(String name) {
-        return categoryRepository.findByName(name);
-    }
-
     public void deleteById(Long id) {
         List<Menu> menuList = menuRepository.findByCategoryId(id);
         for (Menu menu : menuList) {
-            menu.setCategory(null);
+            menu.deleteCategory();
         }
         categoryRepository.deleteById(id);
     }
