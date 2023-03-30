@@ -31,4 +31,8 @@ public class MenuStock {
     private Menu menu;
 
     private Long quantity;
+
+    public boolean remainsQuantity() {
+        return this.quantity >= 1;
+    }
 }

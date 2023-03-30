@@ -3,6 +3,7 @@ package com.mihak.jumun.menu.service;
 import com.mihak.jumun.menu.dto.MenuFormDto;
 import com.mihak.jumun.menu.entity.Menu;
 import com.mihak.jumun.menu.entity.MenuStock;
+import com.mihak.jumun.menu.exception.MenuStockNotFoundException;
 import com.mihak.jumun.menu.repository.MenuStockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,12 @@ public class MenuStockService {
     }
 
     public MenuStock findByMenu(Menu menu) {
-        return menuStockRepository.findByMenu(menu).orElseThrow(RuntimeException::new);
+        return menuStockRepository.findByMenu(menu).orElseThrow(MenuStockNotFoundException::new);
+    }
+
+    public Boolean remainsQuantity(Menu menu) {
+        MenuStock menuStock = findByMenu(menu);
+
+        return menuStock.remainsQuantity();
     }
 }

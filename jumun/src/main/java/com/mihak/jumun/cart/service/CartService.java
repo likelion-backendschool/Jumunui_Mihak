@@ -11,6 +11,8 @@ import com.mihak.jumun.cartAndOption.service.CartAndOptionService;
 import com.mihak.jumun.customer.dto.MenuDetailFormDto;
 import com.mihak.jumun.cart.exception.CartNotFoundException;
 import com.mihak.jumun.menu.entity.Menu;
+import com.mihak.jumun.menu.exception.MenuInsufficientQuantityException;
+import com.mihak.jumun.menu.service.MenuStockService;
 import com.mihak.jumun.option.entity.Option;
 import com.mihak.jumun.option.service.OptionService;
 import com.mihak.jumun.optionGroup.service.OptionGroupService;
@@ -31,10 +33,13 @@ public class CartService {
     private final OptionService optionService;
     private final OptionGroupService optionGroupService;
     private final CartAndOptionService cartAndOptionService;
+    private final MenuStockService menuStockService;
 
+    @Transactional
+    public void save(CartFormDto cartFormDto, String userNickName, Menu menu) {
 
+        checkMenuQuantity(menu);
 
-    public Cart save(CartFormDto cartFormDto, String userNickName, Menu menu) {
         Cart cart = Cart.builder()
                 .userNickname(userNickName)
                 .count(cartFormDto.getCount())
@@ -42,7 +47,15 @@ public class CartService {
                 .menu(menu)
                 .build();
 
-        return cartRepository.save(cart);
+        Cart savedCart = cartRepository.save(cart);
+        List<CartAndOption> cartAndOptions = cartAndOptionService.saveOptions(savedCart, cartFormDto.getCheckOptions());
+        savedCart.updateCartAndOptions(cartAndOptions);
+    }
+
+    private void checkMenuQuantity(Menu menu) {
+        if (menu.getIsLimitedSale() && !menuStockService.remainsQuantity(menu)) {
+            throw new MenuInsufficientQuantityException();
+        }
     }
 
     public List<CartDto> getCartDtoListByNickname(String nickname, boolean isOrdered) {

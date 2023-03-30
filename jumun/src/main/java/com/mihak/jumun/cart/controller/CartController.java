@@ -61,9 +61,7 @@ public class CartController {
         String userNickname = session.getAttribute(customerKey).toString();
         Menu menu = menuService.findById(menuId);
 
-        Cart cart = cartService.save(cartFormDto, userNickname, menu);
-        List<CartAndOption> cartAndOptions = cartAndOptionService.saveOptions(cart, cartFormDto.getCheckOptions());
-        cart.updateCartAndOptions(cartAndOptions);
+        cartService.save(cartFormDto, userNickname, menu);
         return "redirect:/" + storeSN + "/menu";
     }
 
