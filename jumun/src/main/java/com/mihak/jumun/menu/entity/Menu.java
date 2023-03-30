@@ -31,6 +31,8 @@ public class Menu extends BaseEntity {
     @Column(nullable = true)
     private String imgUrl;  //url
 
+    private Boolean isLimitedSale;
+
     @Lob
     @Column(nullable = true)
     private String description;
