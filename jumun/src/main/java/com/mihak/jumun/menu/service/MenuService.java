@@ -9,9 +9,9 @@ import com.mihak.jumun.menu.entity.Menu;
 import com.mihak.jumun.menu.repository.MenuRepository;
 import com.mihak.jumun.store.entity.Store;
 import com.mihak.jumun.store.service.StoreService;
-import com.mihak.jumun.storeCategory.service.SCService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,34 +23,31 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final CategoryRepository categoryRepository;
     private final StoreService storeService;
-    private final SCService scService;
 
+    private final MenuStockService menuStockService;
 
-    public Long save(MenuFormDto menuformDto) {
-        Category category = null;
-        if(menuformDto.getCategoryId() == null) {
-            category = null;
-        } else {
-            Optional<Category> oCategory = categoryRepository.findById((menuformDto.getCategoryId()));
-            category = oCategory.get();
+    @Transactional
+    public Menu save(MenuFormDto menuformDto) {
+        Menu menu = menuRepository.save(Menu.createMenu(menuformDto));
+
+        if (menuformDto.getIsLimitedSale()) {
+            menuStockService.save(menu, menuformDto.getQuantity());
         }
-        Menu newMenu = Menu.createMenu(menuformDto.getName(), menuformDto.getPrice(), menuformDto.getDescription(), menuformDto.getImgUrl(), category, menuformDto.getStore());
-        menuRepository.save(newMenu);
-        return newMenu.getId();
+
+        return menu;
     }
 
     public Menu findById(Long id) {
-        Optional<Menu> findMenu =  menuRepository.findById(id);
-        if(!(findMenu.isPresent())) throw new MenuNotFoundException("수정할 메뉴가 없습니다!");
-        return findMenu.get();
+        return menuRepository.findById(id)
+                .orElseThrow(() -> new MenuNotFoundException("수정할 메뉴가 없습니다!"));
     }
+
     public List<Menu> findAllByCategoryId(Long id) {
-        List<Menu> findMenu = menuRepository.findByCategoryId(id);
-        return findMenu;
+        return menuRepository.findByCategoryId(id);
     }
 
     public List<Menu> findAllByCategoryAndStore(Long categoryId, Store store) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException());
+        Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
 
         return menuRepository.findByCategoryAndStore(category, store);
     }
@@ -66,11 +63,9 @@ public class MenuService {
     }
 
     public void modify(Long menuId, MenuFormDto menuformDto) {
-        Optional<Menu> oMenu = menuRepository.findById(menuId);
-        Optional<Category> oCategory = categoryRepository.findById((menuformDto.getCategoryId()));
-        Category category = oCategory.get();
-        Menu menu = oMenu.get();
-        menu.changeInfo(category, menuformDto.getName(), menuformDto.getPrice(), menuformDto.getImgUrl(), menuformDto.getDescription(), menuformDto.getStore());
+        Menu menu = findById(menuId);
+
+        menu.changeInfo(menuformDto.getCategory(), menuformDto.getName(), menuformDto.getPrice(), menuformDto.getImgUrl(), menuformDto.getDescription(), menuformDto.getStore());
         menuRepository.save(menu);
     }
 
