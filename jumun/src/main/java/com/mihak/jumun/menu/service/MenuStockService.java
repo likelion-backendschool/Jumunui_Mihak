@@ -37,8 +37,8 @@ public class MenuStockService {
     }
 
     @Transactional
-    public synchronized void decreaseQuantity(Menu menu, Long count) {
-        MenuStock menuStock = findByMenu(menu);
+    public void decreaseQuantity(Menu menu, Long count) {
+        MenuStock menuStock = menuStockRepository.findByMenuWithPessimisticLock(menu).orElseThrow(MenuStockNotFoundException::new);
         menuStock.decrease(count);
     }
 }
