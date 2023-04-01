@@ -6,6 +6,7 @@ import com.mihak.jumun.menu.exception.MenuStockNotFoundException;
 import com.mihak.jumun.menu.repository.MenuStockRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -15,14 +16,14 @@ public class MenuStockService {
     private final MenuStockRepository menuStockRepository;
 
     @Transactional
-    public void save(Menu menu, Long quantity) {
+    public MenuStock save(Menu menu, Long quantity) {
 
         MenuStock menuStock = MenuStock.builder()
                 .menu(menu)
                 .quantity(quantity)
                 .build();
 
-        menuStockRepository.save(menuStock);
+        return menuStockRepository.save(menuStock);
     }
 
     public MenuStock findByMenu(Menu menu) {
@@ -36,7 +37,7 @@ public class MenuStockService {
     }
 
     @Transactional
-    public void decreaseQuantity(Menu menu, Long count) {
+    public synchronized void decreaseQuantity(Menu menu, Long count) {
         MenuStock menuStock = findByMenu(menu);
         menuStock.decrease(count);
     }
