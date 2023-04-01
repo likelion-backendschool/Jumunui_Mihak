@@ -25,7 +25,7 @@ public class KakaoPayController {
     @GetMapping("/kakaopay/{orderId}")
     public String doKakaoPay(@PathVariable Long orderId) {
 
-        return "redirect:" + kaKaoPayService.doKakaoPay(orderId);
+        return "redirect:" + kaKaoPayService.pay(orderId);
     }
 
     @GetMapping("/kakaoPaySuccess/{orderId}")

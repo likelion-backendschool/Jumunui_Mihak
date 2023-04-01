@@ -1,6 +1,10 @@
 package com.mihak.jumun.menu.dto;
+import com.mihak.jumun.category.entity.Category;
 import com.mihak.jumun.store.entity.Store;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
 
@@ -10,10 +14,13 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MenuFormDto {
 
     @Nullable
-    private Long categoryId;
+    private Category category;
 
     @NotEmpty(message = "메뉴명을 입력해주세요.")
     private String name;
@@ -24,20 +31,23 @@ public class MenuFormDto {
     @Nullable
     private String imgUrl;
 
-    @Lob @Nullable
+    @Lob
+    @Nullable
     private String description;
 
     private Store store;
 
     private Long optionGroupId;
 
-    public void setMenuInfo(Long categoryId, String menuName, int price, String imgUrl, String description, Store store) {
-        this.categoryId = categoryId;
-        this.name = menuName;
-        this.price = price;
-        this.imgUrl = imgUrl;
-        this.description = description;
+    private Boolean isLimitedSale;
+
+    private Long quantity;
+
+    public void setStore(Store store) {
         this.store = store;
     }
 
+    public void setImgUrl(@Nullable String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 }

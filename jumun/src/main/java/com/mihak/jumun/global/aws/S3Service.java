@@ -13,14 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 @Service
 @NoArgsConstructor
 public class S3Service {
     private AmazonS3 s3Client;
-
     /*lombok 패키지가 아닌, org.springframework.beans.factory.annotation 패키지임에 유의*/
     @Value("${cloud.aws.credentials.accessKey}")
     private String accessKey;
@@ -28,10 +26,10 @@ public class S3Service {
     @Value("${cloud.aws.credentials.secretKey}")
     private String secretKey;
 
-    @Value("jumun-bucket")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Value("ap-northeast-2")
+    @Value("${cloud.aws.region.static}")
     private String region;
 
     /*자격증명이란 accessKey, secretKey를 의미하는데, 의존성 주입 시점에는 @Value 어노테이션의 값이 설정되지 않아서 @PostConstruct를 사용*/

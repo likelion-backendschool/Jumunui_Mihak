@@ -1,9 +1,5 @@
 package com.mihak.jumun.customer.controller;
 
-import com.mihak.jumun.cart.entity.Cart;
-import com.mihak.jumun.cart.service.CartService;
-import com.mihak.jumun.cartAndOption.entity.CartAndOption;
-import com.mihak.jumun.cartAndOption.service.CartAndOptionService;
 import com.mihak.jumun.category.entity.Category;
 import com.mihak.jumun.customer.service.CustomerMenuService;
 import com.mihak.jumun.customer.dto.MenuDetailFormDto;
@@ -17,8 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -28,9 +22,6 @@ public class CustomerMenuController {
     private final StoreService storeService;
     private final SCService scService;
     private final CustomerMenuService customerMenuService;
-    private final CartService cartService;
-    private final CartAndOptionService cartAndOptionService;
-
 
     /*기본창*/
     @GetMapping("/{storeSN}/menu")
@@ -68,18 +59,6 @@ public class CustomerMenuController {
         model.addAttribute("menuDetailFormDto", menuDetailFormDto);
 
         return "customer/customer_menu_detail";
-    }
-    @PostMapping("/{storeSN}/menu/{id}/option")
-    public String saveCart(@PathVariable("storeSN") String storeSN, @PathVariable Long id, @ModelAttribute MenuDetailFormDto menuDetailFormDto,
-                            HttpServletRequest request, @CookieValue("customerLogin") String customerKey){
-        HttpSession session = request.getSession(true);
-        String userNickname = session.getAttribute(customerKey).toString();
-        Menu menu = menuService.findById(id);
-
-        Cart cart = cartService.save(menuDetailFormDto, userNickname, menu);
-        List<CartAndOption> cartAndOptions = cartAndOptionService.saveOptions(cart, menuDetailFormDto.getCheckOptions());
-
-        return "redirect:/" + storeSN + "/menu";
     }
 }
 
