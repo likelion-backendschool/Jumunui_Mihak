@@ -38,8 +38,6 @@ public class CartService {
     @Transactional
     public void save(CartFormDto cartFormDto, String userNickName, Menu menu) {
 
-        checkMenuQuantity(menu);
-
         Cart cart = Cart.builder()
                 .userNickname(userNickName)
                 .count(cartFormDto.getCount())
@@ -47,13 +45,15 @@ public class CartService {
                 .menu(menu)
                 .build();
 
+        checkMenuQuantity(menu, (long) cartFormDto.getCount());
+
         Cart savedCart = cartRepository.save(cart);
         List<CartAndOption> cartAndOptions = cartAndOptionService.saveOptions(savedCart, cartFormDto.getCheckOptions());
         savedCart.updateCartAndOptions(cartAndOptions);
     }
 
-    private void checkMenuQuantity(Menu menu) {
-        if (menu.getIsLimitedSale() && !menuStockService.remainsQuantity(menu)) {
+    private void checkMenuQuantity(Menu menu, Long count) {
+        if (menu.getIsLimitedSale() && !menuStockService.remainsQuantity(menu, count)) {
             throw new MenuInsufficientQuantityException();
         }
     }
@@ -180,17 +180,6 @@ public class CartService {
         List<Option> checkOptions = cartFormDto.getCheckOptions();
         List<CartAndOption> cartAndOptions = cartAndOptionService.saveOptions(cart, checkOptions);
         cart.updateCartAndOptions(cartAndOptions);
-    }
-
-    public Cart save(MenuDetailFormDto menuDetailFormDto, String userNickname, Menu menu) {
-        Cart cart = Cart.builder().
-                userNickname(userNickname)
-                .count(menuDetailFormDto.getCount())
-                .isOrdered(false)
-                .menu(menu)
-                .build();
-
-        return cartRepository.save(cart);
     }
 
     @Transactional

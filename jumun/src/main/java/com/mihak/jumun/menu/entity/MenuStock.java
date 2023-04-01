@@ -1,5 +1,6 @@
 package com.mihak.jumun.menu.entity;
 
+import com.mihak.jumun.menu.exception.MenuInsufficientQuantityException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,7 +33,14 @@ public class MenuStock {
 
     private Long quantity;
 
-    public boolean remainsQuantity() {
-        return this.quantity >= 1;
+    public boolean isEnoughCount(Long count) {
+        return (this.quantity - count) >= 0;
+    }
+
+    public void decrease(Long count) {
+        if (!isEnoughCount(count)) {
+            throw new MenuInsufficientQuantityException();
+        }
+        this.quantity -= count;
     }
 }

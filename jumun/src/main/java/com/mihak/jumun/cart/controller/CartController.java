@@ -1,11 +1,9 @@
 package com.mihak.jumun.cart.controller;
 
-import com.mihak.jumun.cart.entity.Cart;
 import com.mihak.jumun.cart.service.CartService;
 import com.mihak.jumun.cart.dto.CartDetailDto;
 import com.mihak.jumun.cart.dto.CartFormDto;
 import com.mihak.jumun.cart.dto.CartListDto;
-import com.mihak.jumun.cartAndOption.entity.CartAndOption;
 import com.mihak.jumun.cartAndOption.service.CartAndOptionService;
 import com.mihak.jumun.menu.entity.Menu;
 import com.mihak.jumun.menu.service.MenuService;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -53,7 +50,7 @@ public class CartController {
         return OrderType.values();
     }
 
-    @PostMapping("/{storeSN}/menu/{menuId}")
+    @PostMapping("/{storeSN}/menu/{menuId}/option")
     public String save(@PathVariable String storeSN,
                            @PathVariable Long menuId, @ModelAttribute CartFormDto cartFormDto,
                            HttpServletRequest request, @CookieValue("customerLogin") String customerKey) {

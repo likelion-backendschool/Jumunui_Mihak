@@ -1,10 +1,9 @@
 package com.mihak.jumun.order.controller;
 
+import com.mihak.jumun.application.usecase.OrderPayUsecase;
 import com.mihak.jumun.order.dao.OrderHashMapCache;
-import com.mihak.jumun.order.entity.Order;
 import com.mihak.jumun.pay.entity.enumuration.PayType;
 import com.mihak.jumun.store.entity.Store;
-import com.mihak.jumun.order.service.OrderService;
 import com.mihak.jumun.order.dto.OrderDtoFromCart;
 import com.mihak.jumun.order.dto.OrderFormDto;
 import com.mihak.jumun.store.service.StoreService;
@@ -20,9 +19,9 @@ import javax.servlet.http.HttpSession;
 @RequiredArgsConstructor
 public class OrderController {
 
-    private final OrderService orderService;
     private final StoreService storeService;
     private final OrderHashMapCache orderHashMapCache;
+    private final OrderPayUsecase orderPayUsecase;
 
     @PostMapping("/{storeSN}/order")
     public String createOrderDtoFormCart(@PathVariable String storeSN,
@@ -69,14 +68,7 @@ public class OrderController {
         String userNickname = session.getAttribute(customerKey).toString();
 
         OrderDtoFromCart orderDtoFromCart = orderHashMapCache.getOrderDtoFromCart(userNickname);
-        Order order = orderService.save(orderDtoFromCart, orderFormDto);
 
-        if (order.getPayType().equals(PayType.KAKAOPAY)) {
-            return "redirect:/kakaopay/" + order.getId();
-        } else if (order.getPayType().equals(PayType.CASH)) {
-            return "redirect:/cashPaySuccess/" + order.getId();
-        } else {
-            return null;
-        }
+        return "redirect:" + orderPayUsecase.order(orderDtoFromCart, orderFormDto);
     }
 }
