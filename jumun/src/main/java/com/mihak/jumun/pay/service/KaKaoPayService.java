@@ -3,6 +3,7 @@ package com.mihak.jumun.pay.service;
 import com.mihak.jumun.order.entity.Order;
 import com.mihak.jumun.pay.entity.enumuration.PayStatus;
 import com.mihak.jumun.order.service.OrderService;
+import com.mihak.jumun.pay.entity.enumuration.PayType;
 import com.mihak.jumun.pay.response.approval.KakaoPayApproval;
 import com.mihak.jumun.pay.response.KakaoPayResponse;
 import com.mihak.jumun.pay.response.cancel.KakaoPayCancel;
@@ -25,7 +26,7 @@ import java.net.URISyntaxException;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class KaKaoPayService {
+public class KaKaoPayService implements PayService{
 
     private static final String HOST = "https://kapi.kakao.com";
 
@@ -38,7 +39,13 @@ public class KaKaoPayService {
     @Value("${kakao-admin-key}")
     private String kakao_admin_key;
 
-    public String doKakaoPay(Long orderId) {
+    @Override
+    public boolean supports(PayType payType) {
+        return payType == PayType.KAKAOPAY;
+    }
+
+    @Override
+    public String pay(Long orderId) {
 
         Order order = orderService.findById(orderId);
 
