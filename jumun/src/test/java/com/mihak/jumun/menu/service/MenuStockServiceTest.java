@@ -51,9 +51,9 @@ class MenuStockServiceTest {
         assertThat(menuStock.getQuantity()).isEqualTo(5L);
     }
 
-    @DisplayName("재고 감소 - 동시 요청")
+    @DisplayName("재고 감소 - 동시 요청(낙관적 락)")
     @Test
-    void decrease_multi_thread() throws InterruptedException {
+    void decrease_with_optimistic_lock() throws InterruptedException {
 
         int threadCount = 10;
 
