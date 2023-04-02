@@ -5,6 +5,7 @@ import com.mihak.jumun.menu.entity.MenuStock;
 import com.mihak.jumun.menu.exception.MenuStockNotFoundException;
 import com.mihak.jumun.menu.exception.StockLockTakeFailedException;
 import com.mihak.jumun.menu.repository.MenuStockRepository;
+import com.mihak.jumun.menu.repository.RedisLockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class MenuStockService {
 
     private final MenuStockRepository menuStockRepository;
+    private final RedisLockRepository redisLockRepository;
     private final PlatformTransactionManager transactionManager;
 
     @Transactional
@@ -44,6 +46,7 @@ public class MenuStockService {
         return menuStock.isEnoughCount(count);
     }
 
+    // 낙관적 락
     public void decreaseQuantity(Menu menu, Long count) {
 
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
@@ -71,6 +74,21 @@ public class MenuStockService {
                 delay += 1000;
                 sleep(delay);
             }
+        }
+    }
+
+    // Lettuce
+    @Transactional
+    public void decreaseWithLettuce(Menu menu, Long count) {
+        while (!redisLockRepository.lock(menu)) {
+            sleep(100);
+        }
+
+        try {
+            MenuStock menuStock = menuStockRepository.findByMenu(menu).orElseThrow(MenuStockNotFoundException::new);
+            menuStock.decrease(count);
+        } finally {
+            redisLockRepository.unLock(menu);
         }
     }
 
