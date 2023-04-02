@@ -8,6 +8,8 @@ import com.mihak.jumun.menu.repository.MenuStockRepository;
 import com.mihak.jumun.menu.repository.RedisLockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -16,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.concurrent.TimeUnit;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -23,6 +27,7 @@ public class MenuStockService {
 
     private final MenuStockRepository menuStockRepository;
     private final RedisLockRepository redisLockRepository;
+    private final RedissonClient redissonClient;
     private final PlatformTransactionManager transactionManager;
 
     @Transactional
@@ -89,6 +94,29 @@ public class MenuStockService {
             menuStock.decrease(count);
         } finally {
             redisLockRepository.unLock(menu);
+        }
+    }
+
+    @Transactional
+    public void decreaseWithRedisson(Menu menu, Long count) {
+        RLock lock = redissonClient.getLock(menu.toString());
+
+        try {
+            boolean available = lock.tryLock(60, 1, TimeUnit.SECONDS);
+
+            if (!available) {
+                log.info("Redisson : lock 획득 실패");
+                return;
+            }
+
+            MenuStock menuStock = menuStockRepository.findByMenu(menu).orElseThrow(MenuStockNotFoundException::new);
+            menuStock.decrease(count);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (lock != null && lock.isLocked()) {
+                lock.unlock();
+            }
         }
     }
 

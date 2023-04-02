@@ -115,4 +115,37 @@ class MenuStockServiceTest {
         MenuStock menuStock = menuStockRepository.findByMenu(menu).orElseThrow();
         assertThat(menuStock.getQuantity()).isEqualTo(0L);
     }
+
+    @DisplayName("재고 감소 - 동시 요청(Redisson)")
+    @Test
+    void decrease_with_redisson() throws InterruptedException {
+
+        int threadCount = 10;
+
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        // when
+        Menu menu = menuRepository.saveAndFlush(MenuFixture.createLimitedMenu());
+        menuStockRepository.save(MenuStock.builder()
+                .quantity(10L)
+                .menu(menu)
+                .build());
+
+        // given
+        for (int i = 0; i < threadCount ; i++) {
+            executorService.submit(() -> {
+                try {
+                    menuStockService.decreaseWithRedisson(menu, 1L);
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+
+        // then
+        MenuStock menuStock = menuStockRepository.findByMenu(menu).orElseThrow();
+        assertThat(menuStock.getQuantity()).isEqualTo(0L);
+    }
 }
