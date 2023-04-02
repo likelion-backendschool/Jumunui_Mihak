@@ -3,6 +3,7 @@ package com.mihak.jumun.menu.service;
 import com.mihak.jumun.menu.entity.Menu;
 import com.mihak.jumun.menu.entity.MenuStock;
 import com.mihak.jumun.menu.exception.MenuStockNotFoundException;
+import com.mihak.jumun.menu.exception.StockLockTakeFailedException;
 import com.mihak.jumun.menu.repository.MenuStockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,9 @@ public class MenuStockService {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
+        int retries = 10;
+        int delay = 1000;
+
         while (true) {
             try {
                 log.info("call decrease");
@@ -59,7 +63,13 @@ public class MenuStockService {
                 });
                 break;
             } catch (Exception e) {
-                sleep();
+                retries -= 1;
+                if (retries == 0) {
+                    throw new StockLockTakeFailedException("MenuStock 낙관적 락 획득 실패");
+                }
+
+                delay += 1000;
+                sleep(delay);
             }
         }
     }
@@ -69,9 +79,9 @@ public class MenuStockService {
         menuStock.decrease(count);
     }
 
-    private void sleep() {
+    private void sleep(int delay) {
         try {
-            Thread.sleep(2000);
+            Thread.sleep(delay);
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
             log.info("Thread {} interrupted, terminating", Thread.currentThread().getName());
