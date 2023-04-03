@@ -135,4 +135,9 @@ public class MenuStockService {
         }
         log.info("Thread {} finished successfully", Thread.currentThread().getName());
     }
+
+    public void increaseQuantity(Menu menu, Long count) {
+        MenuStock menuStock = menuStockRepository.findByMenuWithOptimisticLock(menu).orElseThrow(MenuStockNotFoundException::new);
+        menuStock.increase(count);
+    }
 }

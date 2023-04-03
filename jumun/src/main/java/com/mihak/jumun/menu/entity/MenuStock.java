@@ -47,4 +47,8 @@ public class MenuStock {
         }
         this.quantity -= count;
     }
+
+    public void increase(Long count) {
+        this.quantity += count;
+    }
 }

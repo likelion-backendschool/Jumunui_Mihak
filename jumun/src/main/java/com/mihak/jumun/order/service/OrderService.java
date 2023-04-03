@@ -4,6 +4,7 @@ import com.mihak.jumun.cart.service.CartService;
 import com.mihak.jumun.cart.dto.CartDto;
 
 import com.mihak.jumun.cart.dto.CartListDto;
+import com.mihak.jumun.menu.service.MenuStockService;
 import com.mihak.jumun.order.entity.Order;
 import com.mihak.jumun.order.entity.enumuration.OrderStatus;
 import com.mihak.jumun.pay.entity.enumuration.PayStatus;
@@ -30,6 +31,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final CartService cartService;
+    private final MenuStockService menuStockService;
 
     public Order save(OrderDtoFromCart orderDtoFromCart, OrderFormDto orderFormDto) {
 
@@ -79,6 +81,18 @@ public class OrderService {
         order.setPayStatus(PayStatus.REFUND);
 
         cartService.cancelOrder(order.getUserNickname());
+        increaseQuantity(order.getUserNickname());
+    }
+
+    private void increaseQuantity(String userNickname) {
+
+        List<CartDto> cartDtos = cartService.getCartListByNickname(userNickname)
+                .getCartDtos()
+                .stream()
+                .filter(m -> m.getMenu().getIsLimitedSale())
+                .toList();
+
+        cartDtos.forEach((cartDto) -> menuStockService.increaseQuantity(cartDto.getMenu(), (long) cartDto.getCount()));
     }
 
     public PaySuccessDto getPaySuccessDto(Order order) {
