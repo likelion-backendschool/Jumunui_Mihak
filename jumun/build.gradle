@@ -39,6 +39,8 @@ dependencies {
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.redisson:redisson-spring-boot-starter:3.20.1'
+
 }
 
 tasks.named('test') {

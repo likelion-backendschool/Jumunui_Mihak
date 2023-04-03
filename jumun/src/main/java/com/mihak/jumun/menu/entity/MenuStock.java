@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Version;
 
 @Entity
 @Getter
@@ -33,6 +34,9 @@ public class MenuStock {
 
     private Long quantity;
 
+    @Version
+    private Long version;
+
     public boolean isEnoughCount(Long count) {
         return (this.quantity - count) >= 0;
     }
@@ -42,5 +46,9 @@ public class MenuStock {
             throw new MenuInsufficientQuantityException();
         }
         this.quantity -= count;
+    }
+
+    public void increase(Long count) {
+        this.quantity += count;
     }
 }
