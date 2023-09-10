@@ -1,28 +1,59 @@
 <div align="center">
-<img src="https://user-images.githubusercontent.com/53210680/196109460-cbe2fb60-0e15-42e3-90c9-9f79a91649a0.png" width="300"></img><br>
-QR코드로 이뤄지는 웹 간편결제<br>
-주문의 미학 (Jumunui-Miihak)<br>
-<img src="https://img.shields.io/badge/Notion-0018A8?style=flat-square&logo=Notion&logoColor=white"/>
-<img src="https://img.shields.io/badge/Retrospec-FF7200?style=flat-square&logo=dev.to&logoColor=white"/>
-<img src="https://img.shields.io/badge/Weekly-E34F26?style=flat-square&logo=dev.to&logoColor=white"/>
+<img src="https://user-images.githubusercontent.com/53210680/196109460-cbe2fb60-0e15-42e3-90c9-9f79a91649a0.png" width="200"></img><br>
 </div>
 
-# What's Jumunui Mihak? 
-![013](https://user-images.githubusercontent.com/53210680/196134333-6e1c35e8-5e00-4806-af8c-4c3740504b03.png)
-![014](https://user-images.githubusercontent.com/53210680/196134457-0ea06b65-b3b0-4eac-882d-2043327094db.png)
-![015](https://user-images.githubusercontent.com/53210680/196134489-7b762b1e-70bd-4355-96a9-6d8f54c4cb59.png)
+### 프로젝트 소개
+<hr/>
+식당을 이용하는 손님이 테이블에서 간편하게 메뉴를 선택하고 결제할 수 있는 서비스입니다.
 
-# Expected effect
-![025](https://user-images.githubusercontent.com/53210680/196136316-14fa06e6-4032-426c-a62f-b63e05b13520.png)
+<br/>
+<br/>
 
-# Jumunui_Mihak
-기능별 gif를 grid로 첨부
+### Tech Stacks
+<hr/>
+<img width="800" alt="image" src="https://github.com/likelion-backendschool/Jumunui_Mihak/assets/71378475/64eff44f-1017-4906-9a72-7b028ae16de5">
 
-# Tech Stacks
-![026](https://user-images.githubusercontent.com/53210680/196134979-17afe301-1b99-4932-988a-8aca7d584577.png)
+<br/>
+<br/>
 
-# Infra Structures
-![028](https://user-images.githubusercontent.com/53210680/196135426-b5408131-80b6-4c31-8f8c-48a0af80892c.png)
+### Infra Structures
+<hr/>
+<img width="800" alt="image" src="https://github.com/likelion-backendschool/Jumunui_Mihak/assets/71378475/21b684a1-665f-474e-bdc1-3a28b8df5c33">
 
-# ERD
-![027](https://user-images.githubusercontent.com/53210680/196135482-84457d70-6a23-4b2b-a1ab-95cc5d2ce8ab.png)
+<br/>
+<br/>
+
+### ERD
+<hr/>
+<img width="800" alt="image" src="https://github.com/likelion-backendschool/Jumunui_Mihak/assets/71378475/4e1d5196-aa3c-4998-91ef-045f6dc53e0c">
+
+<br/>
+<br/>
+
+### UI
+<hr/>
+
+#### 관리자 메뉴 관리
+<img width="1000" alt="image" src="https://github.com/likelion-backendschool/Jumunui_Mihak/assets/71378475/c100c651-f5a3-4adc-afe3-c383854036c0">
+<img width="1000" alt="image" src="https://github.com/likelion-backendschool/Jumunui_Mihak/assets/71378475/574334c5-4732-4dfa-90a8-796dcf64e4fc">
+
+<br/>
+
+#### 관리자 주문 상태 관리
+<img width="1000" alt="image" src="https://github.com/likelion-backendschool/Jumunui_Mihak/assets/71378475/2c9c5f1f-acd3-412a-87d1-4ddc0bcd95e1">
+
+<br/>
+
+#### 매장 관리 (주문 내역)
+<img width="1000" alt="image" src="https://github.com/likelion-backendschool/Jumunui_Mihak/assets/71378475/a10e9243-9fc1-4662-965a-7250ec9dcb14">
+
+<br/>
+
+#### 매장 관리 (매출 내역)
+<img width="1000" alt="image" src="https://github.com/likelion-backendschool/Jumunui_Mihak/assets/71378475/7339cb51-66b7-45bf-a3d8-6ad48cffe87e">
+
+<br/>
+
+#### 사용자 주문 시나리오
+<img width="1000" alt="image" src="https://github.com/likelion-backendschool/Jumunui_Mihak/assets/71378475/7ecaf0c1-947e-4cb4-b63d-fca7558182fa">
+<img width="1000" alt="image" src="https://github.com/likelion-backendschool/Jumunui_Mihak/assets/71378475/806461de-6d7e-4e24-9eff-f97701583036">
